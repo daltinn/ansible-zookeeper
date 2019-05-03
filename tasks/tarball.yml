@@ -47,6 +47,7 @@
   tags: bootstrap
   with_items:
     - "{{data_dir}}"
+    - "{{data_log_dir}}"
     - "{{log_dir}}"
 
 - name: Write myid file.
