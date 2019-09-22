@@ -13,8 +13,7 @@ preAllocSize={{ zookeeper_pre_alloc_size }}
 snapCount={{ zookeeper_snap_count }}
 standaloneEnabled={{ zookeeper_standalone }}
 leaderServes={{ zookeeper_leader_servers }}
-
-{%- if zookeeper_autopurge_purgeInterval > 0 %}
+{% if zookeeper_autopurge_purgeInterval > 0 %}
 autopurge.purgeInterval={{ zookeeper_autopurge_purgeInterval }}
 autopurge.snapRetainCount={{ zookeeper_autopurge_snapRetainCount }}
 {% endif %}
@@ -22,21 +21,17 @@ autopurge.snapRetainCount={{ zookeeper_autopurge_snapRetainCount }}
 clientPort={{ zookeeper_client_port }}
 clientPortAddress={{ zookeeper_client_port_address }}
 
-{% if zookeeper_hosts %}
-{%   for server in zookeeper_hosts %}
-{%     if server.host is defined %}
-{%       if server.ip is defined %}
+{% for server in zookeeper_hosts %}
+{%   if server.host is defined %}
+{%     if server.ip is defined %}
 server.{{ server.id }}={{ server.ip }}:{{ zookeeper_cluster_ports }}
 ##:{{ server.role }};{{ server.client_port }}
-{%       else %}
+{%     else %}
 server.{{ server.id }}={{ server.host }}:{{ zookeeper_cluster_ports }}
 ##:{{ server.role }};{{ server.client_port }}
-{%       endif %}
-{%     else %}
+{%     endif %}
+{%   else %}
 server.{{ loop.index }}={{ server }}:{{ zookeeper_cluster_ports }}
 ##:{{ server.role }};{{ zookeeper_client_port }}
-{%     endif %}
-{%   endfor %}
-{% else %}
-server.1=localhost:2888:3888
-{% endif %}
+{%   endif %}
+{% endfor %}

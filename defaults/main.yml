@@ -1,8 +1,9 @@
 ---
 apt_cache_timeout: 3600
+dpkg_force_rewrite_configs: no
 
 zookeeper_version: 3.5.1
-zookeeper_url: http://www.us.apache.org/dist/zookeeper/zookeeper-{{zookeeper_version}}/zookeeper-{{zookeeper_version}}.tar.gz
+zookeeper_url: "http://www.us.apache.org/dist/zookeeper/zookeeper-{{zookeeper_version}}/zookeeper-{{zookeeper_version}}.tar.gz"
 zookeeper_download_from_mirror: yes
 
 # Flag that selects if systemd or upstart will be used for the init service:
@@ -90,11 +91,10 @@ zookeeper_env: #{}
     - "-Xlog:gc+heap+coops=info,gc+ergo=info"
     - "-Xlog:gc*=info,safepoint:file={{ zookeeper_log_dir }}/gc.log:utctime,pid,tags:filecount=4,filesize=64m"
     # - "-XX:+PrintFlagsFinal"
-    - "-XX:NewRatio=2"
     - "-XX:SurvivorRatio=6"
-    - "-XX:MaxNewSize={{ zookeeper_mem_new_size | d('128m') }}"
+    - "-XX:{% if zookeeper_mem_new_size is defined %}MaxNewSize={{ zookeeper_mem_new_size }}{% else %}NewRatio=2{% endif %}"
     - "-XX:MaxDirectMemorySize={{ zookeeper_mem_size | d('128m') }}"
-    - "-XX:ConcGCThreads={{ ((ansible_processor_vcpus / 4) + 1) | int | abs }}"
+    - "-XX:ConcGCThreads={{ (ansible_processor_vcpus / 2) | int | abs }}"
     - "-XX:ParallelGCThreads={{ ansible_processor_vcpus }}"
     - "-XX:G1HeapRegionSize=16m"
     - "-XX:MaxGCPauseMillis=600"
@@ -118,15 +118,3 @@ zookeeper_force_myid: yes
 zookeeper_memlock_enabled: yes
 zookeeper_max_threads: 65536
 zookeeper_max_open_files: 65536
-
-zookeeper_playbook_version: "0.0.2"
-version: 3.4.6
-apt_cache_timeout: 3600
-client_port: 2181
-init_limit: 5
-sync_limit: 2
-tick_time: 2000
-myid: 1
-data_dir: /var/lib/zookeeper
-log_dir: /var/log/zookeeper
-servers: ""
