@@ -1,4 +1,4 @@
-# {{ansible_managed}}
+# {{ ansible_managed }}
 
 [Unit]
 Description=ZooKeeper
@@ -6,13 +6,24 @@ After=network.target
 Wants=network.target
 
 [Service]
+Nice=-1
+{% if current_jemalloc_env_var is defined and current_jemalloc_env_var != '' %}
+Environment=LD_PRELOAD={{ current_jemalloc_env_var }}
+{% endif %}
+{% if zookeeper_java_home is defined and zookeeper_java_home != '' %}
+Environment=JAVA_HOME={{ zookeeper_java_home }}
+{% endif %}
+LimitNOFILE={{ zookeeper_max_open_files | d('65536') }}
+LimitNPROC={{ zookeeper_max_threads | d('65536') }}
+{% if zookeeper_memlock_enabled %}
+LimitMEMLOCK=infinity
+{% endif %}
 Type=simple
 User=zookeeper
 Group=zookeeper
-ExecStart={{zookeeper_dir}}/bin/zkServer.sh start-foreground
+ExecStart={{ zookeeper_dir }}/bin/zkServer.sh start-foreground
 Restart=always
 RestartSec=3
-
 TimeoutSec=300
 
 [Install]

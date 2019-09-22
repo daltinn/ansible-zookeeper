@@ -60,6 +60,7 @@ galaxy_info:
       - vivid
       - wily
       - xenial
+      - bionic
   #- name: SLES
   #  versions:
   #  - all

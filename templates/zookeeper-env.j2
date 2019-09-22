@@ -1,0 +1,29 @@
+# {{ ansible_managed }}
+
+ZOOMAIN=org.apache.zookeeper.server.quorum.QuorumPeerMain
+ZOOCFGDIR={{ zookeeper_conf_dir }}/conf
+ZOOCFG={{ zookeeper_conf_dir }}/conf/zoo.cfg
+ZOO_LOG_DIR={{ zookeeper_log_dir }}
+ZOO_LOG4J_PROP="{{ zookeeper_log4j_prop }}"
+
+# If ZooKeeper is started through systemd, this will only be used for command
+# line tools such as `zkCli.sh` and not for the actual server
+{% if zookeeper_java_home is defined and zookeeper_java_home != '' %}
+JAVA={{ zookeeper_java_home }}/bin/java
+{% else %}
+JAVA=/usr/bin/java
+{% endif %}
+{% if zookeeper_env is defined %}
+{%   for key, value in zookeeper_env.items() | sort %}
+{%     if value is sequence %}
+{{ key }}="{{ value | join(' ') }}"
+{%     else %}
+{{ key }}="{{ value }}"
+{%     endif %}
+{%   endfor %}
+{% endif %}
+
+# TODO: This is really ugly
+# How to find out which jars are needed?
+# Seems that log4j requires the log4j.properties file to be in the classpath
+CLASSPATH="$ZOOCFGDIR:/usr/share/java/jline.jar:/usr/share/java/log4j-1.2.jar:/usr/share/java/xercesImpl.jar:/usr/share/java/xmlParserAPIs.jar:/usr/share/java/netty.jar:/usr/share/java/slf4j-api.jar:/usr/share/java/slf4j-log4j12.jar:/usr/share/java/zookeeper.jar"

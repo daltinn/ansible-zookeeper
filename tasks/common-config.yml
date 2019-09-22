@@ -1,17 +1,61 @@
 ---
-- name: Configure zookeeper-env.sh
-  template: src=zookeeper-env.sh.j2 dest={{ zookeeper_conf_dir }}/conf/zookeeper-env.sh owner=zookeeper group=zookeeper
-  tags: deploy
+- name: Change ownership on zookeeper directory
+  file:
+    path: "{{zookeeper_dir}}"
+    owner: zookeeper
+    group: zookeeper
+    state: directory
+    recurse: yes
+
+- name: Create zookeeper {{item}} directory
+  file:
+    path: "{{item}}"
+    owner: zookeeper
+    group: zookeeper 
+    state: directory
+    recurse: yes
+  with_items:
+    - "{{zookeeper_data_dir}}"
+    - "{{zookeeper_log_dir}}"
+    - "{{zookeeper_data_log_dir}}"
+
+- name: Create zookeeper myid simlink
+  file:
+    src: "{{ zookeeper_conf_dir }}/conf/myid"
+    dest: "{{ zookeeper_data_dir }}/myid"
+    owner: zookeeper
+    group: zookeeper
+    state: link
   notify:
     - Restart zookeeper
-  when: zookeeper_env is defined and zookeeper_env|length > 0
+
+- name: Configure zookeeper env file
+  template:
+    src: "zookeeper-env.j2"
+    dest: "{{ zookeeper_conf_dir }}/conf/environment"
+    owner: zookeeper
+    group: zookeeper
+    mode: 0755
+  tags:
+    - deploy
+  when:
+    - zookeeper_env is defined
+    - zookeeper_env | length > 0
+  notify:
+    - Restart zookeeper
 
 - name: Update the log4j config with saner production values
-  template: src=log4j.properties.j2 dest={{ zookeeper_conf_dir }}/conf/log4j.properties
-  tags: deploy
+  template:
+    src: "log4j.properties.j2"
+    dest: "{{ zookeeper_conf_dir }}/conf/log4j.properties"
+  tags:
+    - deploy
   notify:
     - Restart zookeeper
 
 - name: Enable zookeeper service
-  service: name=zookeeper enabled=yes
-  tags: deploy
+  service:
+    name: zookeeper
+    enabled: yes
+  tags:
+    - deploy

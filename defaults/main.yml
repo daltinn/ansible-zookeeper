@@ -1,47 +1,120 @@
 ---
-zookeeper_version: 3.4.12
+apt_cache_timeout: 3600
+
+zookeeper_version: 3.5.1
 zookeeper_url: http://www.us.apache.org/dist/zookeeper/zookeeper-{{zookeeper_version}}/zookeeper-{{zookeeper_version}}.tar.gz
-zookeeper_download_from_mirror: true
+zookeeper_download_from_mirror: yes
 
 # Flag that selects if systemd or upstart will be used for the init service:
 # Note: by default Ubuntu 15.04 and later use systemd (but support switch to upstart)
-_ubuntu_1504: "{{ ansible_distribution == 'Ubuntu' and ansible_distribution_version is version_compare(15.04, '>=') }}"
-_debian_8: "{{ ansible_distribution == 'Debian' and ansible_distribution_version is version_compare(8.0, '>=') }}"
-zookeeper_debian_systemd_enabled: "{{ _ubuntu_1504 or _debian_8 }}"
+is_ubuntu_1504: "{{ ansible_distribution == 'Ubuntu' and ansible_distribution_version is version_compare(15.04, '>=') }}"
+is_debian_8: "{{ ansible_distribution == 'Debian' and ansible_distribution_version is version_compare(8.0, '>=') }}"
+zookeeper_debian_systemd_enabled: "{{ is_ubuntu_1504 or is_debian_8 }}"
 
-zookeeper_debian_apt_install: false
+zookeeper_debian_apt_install: no
+zookeeper_debian_apt_force_apply: yes
+zookeeper_debian_apt_hold_packages: yes
 zookeeper_debian_apt_repositories: []
-apt_cache_timeout: 3600
-zookeeper_register_path_env: false
+zookeeper_debian_apt_packages:
+  - { pkg: "zookeeper",  state: "present" }
+  - { pkg: "zookeeperd", state: "present" }
 
-client_port: 2181
-client_port_address: '0.0.0.0'
-init_limit: 5
-sync_limit: 2
-tick_time: 2000
-zookeeper_autopurge_purgeInterval: 0
-zookeeper_autopurge_snapRetainCount: 10
-zookeeper_cluster_ports: "2888:3888"
-zookeeper_max_client_connections: 60
+zookeeper_tarball_dir: /opt/src
+zookeeper_register_path_env: no
 
-data_dir: /var/lib/zookeeper
-log_dir: /var/log/zookeeper
+zookeeper_client_port: 2181
+zookeeper_client_port_address: '0.0.0.0'
+zookeeper_global_outstanding_limit: 8000 #1000
+zookeeper_init_limit: 60000 #5
+zookeeper_sync_limit: 100 #5
+zookeeper_tick_time: 2000 #2000
+zookeeper_autopurge_purgeInterval: 1 #0
+zookeeper_autopurge_snapRetainCount: 20 #3
+zookeeper_cluster_ports: '2888:3888'
+zookeeper_max_client_connections: 3000 #60
+zookeeper_min_session_timeout: "{{ zookeeper_tick_time * 2 }}" ## tickTime *2
+zookeeper_max_session_timeout: "{{ zookeeper_tick_time * 200 }}" ## tickTime *20
+zookeeper_pre_alloc_size: 131072
+zookeeper_snap_count: 2000000 #100000
+
+# Zookeeper directories
 zookeeper_dir: "{{ zookeeper_debian_apt_install | ternary('/usr/share/zookeeper', '/opt/zookeeper-' + zookeeper_version) }}"
 zookeeper_conf_dir: "{{ zookeeper_debian_apt_install | ternary('/etc/zookeeper', zookeeper_dir) }}"
-zookeeper_tarball_dir: /opt/src
+zookeeper_log_dir: /var/log/zookeeper
+zookeeper_data_dir: /var/lib/zookeeper
+zookeeper_data_log_dir: /var/log/zookeeper
 
 # Rolling file appender setttings
-zookeeper_rolling_log_file_max_size: 10MB
+zookeeper_rolling_log_file_max_size: 100MB
 zookeeper_max_rolling_log_file_count: 10
+zookeeper_log4j_prop: 'TRACE, ROLLINGFILE'
 
-zookeeper_hosts_hostname: "{{inventory_hostname}}"
+zookeeper_hosts_hostname: "{{ inventory_hostname_short }}"
 # List of dict (i.e. {zookeeper_hosts:[{host:,id:},{host:,id:},...]})
 zookeeper_hosts:
-  - host: "{{zookeeper_hosts_hostname}}" # the machine running
+  - host: "{{ zookeeper_hosts_hostname }}" # the machine running
     id: 1
-
+    role: "participant"
+    client_port: "{{ zookeeper_client_port }}"
 # Dict of ENV settings to be written into the (optional) conf/zookeeper-env.sh
-zookeeper_env: {}
+zookeeper_java_home: ''
+zookeeper_java_release: ''
+zookeeper_env: #{}
+  JMXLOCALONLY: false
+  JVMFLAGS:
+    - "-server"
+    - "-Xms128m"
+    - "-Xmx{{ zookeeper_heap_size | d('512m') }}"
+    - "-Xss2m"
+    - "-Dfile.encoding=UTF-8"
+    - "-Djava.locale.providers=COMPAT"
+    - "-Djava.awt.headless=true"
+    - "-Djdk.nio.maxCachedBufferSize=16777216"
+    - "-Dio.netty.noUnsafe=true"
+    - "-Dio.netty.noKeySetOptimization=true"
+    - "-Dio.netty.recycler.maxCapacityPerThread=0"
+    - "-Dio.netty.allocator.type=unpooled"
+    - "-Dio.netty.leakDetectionLevel=advanced"
+    - "-XX:+AlwaysActAsServerClassMachine"
+    - "-XX:+AlwaysPreTouch"
+    - "-XX:+UseG1GC"
+    # - "-XX:+UseShenandoahGC"
+    # - "-XX:ShenandoahUncommitDelay=1000"
+    # - "-XX:ShenandoahGuaranteedGCInterval=10000"
+    # - "-XX:+UseLargePages"
+    - "-XX:+DisableExplicitGC"
+    - "-XX:+UnlockDiagnosticVMOptions"
+    - "-XX:+UnlockExperimentalVMOptions"
+    - "-XX:+UseStringDeduplication"
+    - "-XX:+ExitOnOutOfMemoryError"
+    - "-Xlog:gc+heap+coops=info,gc+ergo=info"
+    - "-Xlog:gc*=info,safepoint:file={{ zookeeper_log_dir }}/gc.log:utctime,pid,tags:filecount=4,filesize=64m"
+    # - "-XX:+PrintFlagsFinal"
+    - "-XX:NewRatio=2"
+    - "-XX:SurvivorRatio=6"
+    - "-XX:MaxNewSize={{ zookeeper_mem_new_size | d('128m') }}"
+    - "-XX:MaxDirectMemorySize={{ zookeeper_mem_size | d('128m') }}"
+    - "-XX:ConcGCThreads={{ ((ansible_processor_vcpus / 4) + 1) | int | abs }}"
+    - "-XX:ParallelGCThreads={{ ansible_processor_vcpus }}"
+    - "-XX:G1HeapRegionSize=16m"
+    - "-XX:MaxGCPauseMillis=600"
+    - "-XX:G1MixedGCCountTarget=16" #8
+    - "-XX:InitiatingHeapOccupancyPercent=60"
+    - "-XX:G1NewSizePercent=20"
+    - "-XX:G1MaxNewSizePercent=25"
+    - "-XX:G1HeapWastePercent=2"
+    - "-XX:G1MixedGCLiveThresholdPercent=90" #80
+    - "-XX:G1OldCSetRegionThresholdPercent=15"
+    - "-XX:G1ReservePercent=15"
+
+# Multi-node cluster enadled by default
+zookeeper_standalone: "false"
+zookeeper_leader_servers: "yes"
 
 # Controls Zookeeper myid generation
 zookeeper_force_myid: yes
+
+# List of environment vars
+zookeeper_memlock_enabled: yes
+zookeeper_max_threads: 65536
+zookeeper_max_open_files: 65536
