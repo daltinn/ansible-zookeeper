@@ -2,9 +2,9 @@
 apt_cache_timeout: 3600
 dpkg_force_rewrite_configs: no
 
-zookeeper_version: 3.5.1
-zookeeper_url: "http://www.us.apache.org/dist/zookeeper/zookeeper-{{zookeeper_version}}/zookeeper-{{zookeeper_version}}.tar.gz"
+zookeeper_version: 3.5.5
 zookeeper_download_from_mirror: yes
+zookeeper_url: "https://www-eu.apache.org/dist/zookeeper/zookeeper-{{zookeeper_version}}/apache-zookeeper-{{zookeeper_version}}-bin.tar.gz"
 
 # Flag that selects if systemd or upstart will be used for the init service:
 # Note: by default Ubuntu 15.04 and later use systemd (but support switch to upstart)
@@ -37,6 +37,7 @@ zookeeper_min_session_timeout: "{{ zookeeper_tick_time * 2 }}" ## tickTime *2
 zookeeper_max_session_timeout: "{{ zookeeper_tick_time * 200 }}" ## tickTime *20
 zookeeper_pre_alloc_size: 131072
 zookeeper_snap_count: 2000000 #100000
+zookeeper_whitelisted_commands: "*" #"mntr,conf,ruok"
 
 # Zookeeper directories
 zookeeper_dir: "{{ zookeeper_debian_apt_install | ternary('/usr/share/zookeeper', '/opt/zookeeper-' + zookeeper_version) }}"
@@ -50,7 +51,8 @@ zookeeper_rolling_log_file_max_size: 100MB
 zookeeper_max_rolling_log_file_count: 10
 zookeeper_log4j_prop: 'TRACE, ROLLINGFILE'
 
-zookeeper_hosts_hostname: "{{ inventory_hostname_short }}"
+zookeeper_hosts_hostname: "{{ inventory_hostname }}"
+
 # List of dict (i.e. {zookeeper_hosts:[{host:,id:},{host:,id:},...]})
 zookeeper_hosts:
   - host: "{{ zookeeper_hosts_hostname }}" # the machine running
