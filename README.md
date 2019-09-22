@@ -5,8 +5,6 @@ ansible-zookeeper
 
 ZooKeeper playbook for Ansible
 
-Installation
------------
 
 ```bash
 ansible-galaxy install AnsibleShipyard.ansible-zookeeper
@@ -128,6 +126,26 @@ zookeeper_hosts: "
     {%- endfor %}
     {{- ips -}}"
 ```
+=======
+## Testing
+
+    vagrant up ubuntu && vagrant ssh ubuntu
+    cd /home/vagrant/roles/ansible-zookeeper
+    bin/test
+
+## Example Usage
+
+    ---
+    - hosts: zookeepers
+    sudo: true
+
+    roles:
+    - {
+        role: ansible-zookeeper,
+        version: 3.4.6,
+        myid: 1
+      }
+>>>>>>> 7299aaac1cb55691fadd30473209b097ab8274cc
 
 See this sample [playbook](https://github.com/AnsibleShipyard/ansible-galaxy-roles/blob/master/playbook.yml)
 which shows how to use this playbook as well as others. It is part of [ansible-galaxy-roles](https://github.com/AnsibleShipyard/ansible-galaxy-roles) and
