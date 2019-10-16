@@ -1,6 +1,6 @@
 ---
 apt_cache_timeout: 3600
-dpkg_force_rewrite_configs: no
+dpkg_force_overwrite_configs: no
 
 zookeeper_version: 3.5.5
 zookeeper_download_from_mirror: yes

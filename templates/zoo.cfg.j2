@@ -26,13 +26,11 @@ clientPortAddress={{ zookeeper_client_port_address }}
 {%   if server.host is defined %}
 {%     if server.ip is defined %}
 server.{{ server.id }}={{ server.ip }}:{{ zookeeper_cluster_ports }}
-##:{{ server.role }};{{ server.client_port }}
 {%     else %}
 server.{{ server.id }}={{ server.host }}:{{ zookeeper_cluster_ports }}
-##:{{ server.role }};{{ server.client_port }}
 {%     endif %}
 {%   else %}
 server.{{ loop.index }}={{ server }}:{{ zookeeper_cluster_ports }}
-##:{{ server.role }};{{ zookeeper_client_port }}
+#:{{ server.role }};{{ zookeeper_client_port }}
 {%   endif %}
 {% endfor %}

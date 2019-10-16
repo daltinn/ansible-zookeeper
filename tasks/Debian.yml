@@ -15,7 +15,7 @@
     state: "{{ item.state }}"
     force: "{{ zookeeper_debian_apt_force_apply }}"
     force_apt_get: yes
-    dpkg_options: "{{ dpkg_force_rewrite_configs | ternary('force-confdef,force-confnew', 'force-confdef,force-confold') }}"
+    dpkg_options: "{{ dpkg_force_overwrite_configs | ternary('force-confdef,force-confnew', 'force-confdef,force-confold') }}"
     update_cache: yes
     cache_valid_time: "{{ apt_cache_timeout }}"
   environment:
