@@ -1,12 +1,34 @@
 ---
 
-- include_tasks: Debian.yml
-  when: ansible_os_family == 'Debian' and zookeeper_debian_apt_install
+- name: zookeeper | Install with repositories (Debian|Ubuntu)
+  include_tasks: Debian.yml
+  when:
+    - ansible_os_family == 'Debian'
+    - zookeeper_apt_install
+  tags:
+    - always
 
-- include_tasks: Debian-tarball.yml
-  when: ansible_os_family == 'Debian' and not zookeeper_debian_apt_install
+- name: zookeeper | Install with tarball (Debian|Ubuntu)
+  include_tasks: Debian-tarball.yml
+  when:
+    - ansible_os_family == 'Debian'
+    - not zookeeper_apt_install
+  tags:
+    - always
 
-- include_tasks: RedHat.yml
-  when: ansible_os_family == 'RedHat'
+- name: zookeeper | Install with tarball (RedHat|Centos)
+  include_tasks: RedHat.yml
+  when:
+    - ansible_os_family == 'RedHat'
+  tags:
+    - always
 
-- include_tasks: common-config.yml
+- name: zookeeper | Configure
+  include_tasks: common-config.yml
+  tags:
+    - always
+
+- name: zookeeper | Ensure handlers are notified now to conflicts.
+  meta: flush_handlers
+  tags:
+    - always

@@ -1,30 +1,25 @@
-ansible-zookeeper
-=================
+# ansible-zookeeper
 
 [![Build Status](https://travis-ci.org/AnsibleShipyard/ansible-zookeeper.svg?branch=master)](https://travis-ci.org/AnsibleShipyard/ansible-zookeeper)
 
 ZooKeeper playbook for Ansible
 
-
 ```bash
 ansible-galaxy install AnsibleShipyard.ansible-zookeeper
 ```
 
-Dependencies
-------------
+## Dependencies
 
 Java
 
-* <https://github.com/AnsibleShipyard/ansible-java>
-* <https://github.com/geerlingguy/ansible-role-java>
+- <https://github.com/AnsibleShipyard/ansible-java>
+- <https://github.com/geerlingguy/ansible-role-java>
 
-Requirements
-------------
+## Requirements
 
 Ansible version at least 1.6
 
-Role Variables
---------------
+## Role Variables
 
 ```yaml
 ---
@@ -33,11 +28,11 @@ zookeeper_url: "http://www.us.apache.org/dist/zookeeper/zookeeper-{{zookeeper_ve
 
 # Flag that selects if systemd or upstart will be used for the init service:
 # Note: by default Ubuntu 15.04 and later use systemd (but support switch to upstart)
-zookeeper_debian_systemd_enabled: "{{ ansible_distribution_version is version_compare(15.04, '>=') }}"
-zookeeper_debian_apt_install: false
-# (Optional:) add custom 'ppa' repositories depending on the distro version (only with debian_apt_install=true)
+# zookeeper_systemd_enabled: "{{ ansible_distribution_version is version_compare(15.04, '>=') }}"
+zookeeper_apt_install: false
+# (Optional:) add custom 'ppa' repositories depending on the distro version (only with apt_install=true)
 # Example: to use a community zookeeper v3.4.8 deb pkg for Ubuntu 14.04 (where latest official is v3.4.5)
-zookeeper_debian_apt_repositories:
+zookeeper_apt_repositories:
   - repository_url: "ppa:ufscar/zookeeper"
     distro_version: "14.04"
 
@@ -55,8 +50,8 @@ zookeeper_max_client_connections: 60
 
 zookeeper_data_dir: /var/lib/zookeeper
 zookeeper_log_dir: /var/log/zookeeper
-zookeeper_dir: /opt/zookeeper-{{zookeeper_version}} # or /usr/share/zookeeper when zookeeper_debian_apt_install is true
-zookeeper_conf_dir: {{zookeeper_dir}} # or /etc/zookeeper when zookeeper_debian_apt_install is true
+zookeeper_dir: /opt/zookeeper-{{zookeeper_version}} # or /usr/share/zookeeper when zookeeper_apt_install is true
+zookeeper_conf_dir: { { zookeeper_dir } } # or /etc/zookeeper when zookeeper_apt_install is true
 zookeeper_tarball_dir: /opt/src
 
 zookeeper_hosts_hostname: "{{inventory_hostname}}"
@@ -69,27 +64,25 @@ zookeeper_hosts:
 zookeeper_env: {}
 
 # Controls Zookeeper myid generation
-zookeeper_force_myid: yes
+zookeeper_force_myid: true
 ```
 
-Example Playbook
-----------------
+## Example Playbook
 
 ```yaml
 - name: Installing ZooKeeper
   hosts: all
-  sudo: yes
+  sudo: true
   roles:
     - role: AnsibleShipyard.ansible-zookeeper
 ```
 
-Example Retrieving Tarball From S3
-----------------------------------
+## Example Retrieving Tarball From S3
 
 ```yaml
 - name: Installing ZooKeeper
   hosts: all
-  sudo: yes
+  sudo: true
   vars:
     zookeeper_archive_s3_bucket: my-s3-bucket
     zookeeper_archive_s3_object: my/s3/directory/zookeeper-{{zookeeper_version}}.tar.gz
@@ -97,19 +90,18 @@ Example Retrieving Tarball From S3
     - role: AnsibleShipyard.ansible-zookeeper
 ```
 
-Cluster Example
-----------------
+## Cluster Example
 
 ```yaml
 - name: Zookeeper cluster setup
   hosts: zookeepers
-  sudo: yes
+  sudo: true
   roles:
     - role: AnsibleShipyard.ansible-zookeeper
       zookeeper_hosts: "{{groups['zookeepers']}}"
 ```
 
-Assuming ```zookeepers``` is a [hosts group](http://docs.ansible.com/ansible/intro_inventory.html#group-variables) defined in inventory file.
+Assuming `zookeepers` is a [hosts group](http://docs.ansible.com/ansible/intro_inventory.html#group-variables) defined in inventory file.
 
 ```inventory
 [zookeepers]
@@ -120,11 +112,11 @@ Custom IP per host group
 
 ```yaml
 zookeeper_hosts: "
-    {%- set ips = [] %}
-    {%- for host in groups['zookeepers'] %}
-    {{- ips.append(dict(id=loop.index, host=host, ip=hostvars[host]['ansible_default_ipv4'].address)) }}
-    {%- endfor %}
-    {{- ips -}}"
+  {%- set ips = [] %}
+  {%- for host in groups['zookeepers'] %}
+  {{- ips.append(dict(id=loop.index, host=host, ip=hostvars[host]['ansible_default_ipv4'].address)) }}
+  {%- endfor %}
+  {{- ips -}}"
 ```
 
 ## Testing
@@ -150,8 +142,7 @@ See this sample [playbook](https://github.com/AnsibleShipyard/ansible-galaxy-rol
 which shows how to use this playbook as well as others. It is part of [ansible-galaxy-roles](https://github.com/AnsibleShipyard/ansible-galaxy-roles) and
 serves as a curation (and thus an example) of all our ansible playbooks.
 
-License
--------
+## License
 
 The MIT License (MIT)
 
@@ -175,8 +166,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-AnsibleShipyard
--------
+## AnsibleShipyard
 
 Our related playbooks
 
@@ -185,7 +175,6 @@ Our related playbooks
 1. [ansible-chronos](https://github.com/AnsibleShipyard/ansible-chronos)
 1. [ansible-zookeeper](https://github.com/AnsibleShipyard/ansible-zookeeper)
 
-Author Information
-------------------
+## Author Information
 
 @AnsibleShipyard/developers and others.

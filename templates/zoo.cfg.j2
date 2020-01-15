@@ -1,5 +1,4 @@
-# {{ ansible_managed }}
-
+{{ ansible_managed | comment }}
 tickTime={{ zookeeper_tick_time }}
 dataDir={{ zookeeper_data_dir }}
 dataLogDir={{ zookeeper_data_log_dir }}
@@ -13,6 +12,7 @@ maxSessionTimeout={{ zookeeper_max_session_timeout }}
 preAllocSize={{ zookeeper_pre_alloc_size }}
 snapCount={{ zookeeper_snap_count }}
 standaloneEnabled={{ zookeeper_standalone }}
+reconfigEnabled={{ zookeeper_reconfig }}
 leaderServes={{ zookeeper_leader_servers }}
 {% if zookeeper_autopurge_purgeInterval > 0 %}
 autopurge.purgeInterval={{ zookeeper_autopurge_purgeInterval }}
@@ -20,17 +20,13 @@ autopurge.snapRetainCount={{ zookeeper_autopurge_snapRetainCount }}
 {% endif %}
 
 clientPort={{ zookeeper_client_port }}
-clientPortAddress={{ zookeeper_client_port_address }}
+clientPortAddress={{ zookeeper_client_address }}
 
-{% for server in zookeeper_hosts %}
-{%   if server.host is defined %}
-{%     if server.ip is defined %}
-server.{{ server.id }}={{ server.ip }}:{{ zookeeper_cluster_ports }}
-{%     else %}
-server.{{ server.id }}={{ server.host }}:{{ zookeeper_cluster_ports }}
-{%     endif %}
+{% for node in zookeeper_hosts %}
+{%   if node.address is defined %}
+server.{{ node.id }}={{ node.address }}:{{ zookeeper_cluster_ports }}
 {%   else %}
-server.{{ loop.index }}={{ server }}:{{ zookeeper_cluster_ports }}
-#:{{ server.role }};{{ zookeeper_client_port }}
+server.{{ loop.index }}={{ node }}:{{ zookeeper_cluster_ports }}
 {%   endif %}
 {% endfor %}
+{# :{{ node.role }}:{{ zookeeper_client_port }} #}

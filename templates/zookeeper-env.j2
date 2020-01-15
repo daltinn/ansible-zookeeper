@@ -1,5 +1,4 @@
-# {{ ansible_managed }}
-
+{{ ansible_managed | comment }}
 ZOOMAIN=org.apache.zookeeper.server.quorum.QuorumPeerMain
 ZOOCFGDIR={{ zookeeper_conf_dir }}/conf
 ZOOCFG={{ zookeeper_conf_dir }}/conf/zoo.cfg

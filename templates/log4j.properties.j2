@@ -1,5 +1,4 @@
-# {{ ansible_managed }}
-
+{{ ansible_managed | comment }}
 # Define some default values that can be overridden by system properties
 zookeeper.root.logger=INFO, CONSOLE, ROLLINGFILE
 zookeeper.console.threshold=INFO
@@ -11,8 +10,6 @@ zookeeper.tracelog.file=zookeeper_trace.log
 
 #
 # ZooKeeper Logging Configuration
-#
-
 # Format is "<default threshold> (, <appender>)+
 
 # DEFAULT: console appender only
@@ -46,7 +43,6 @@ log4j.appender.ROLLINGFILE.MaxBackupIndex={{ zookeeper_max_rolling_log_file_coun
 
 log4j.appender.ROLLINGFILE.layout=org.apache.log4j.PatternLayout
 log4j.appender.ROLLINGFILE.layout.ConversionPattern=%d{ISO8601} [myid:%X{myid}] - %-5p [%t:%C{1}@%L] - %m%n
-
 
 #
 # Add TRACEFILE to rootLogger to get log file output

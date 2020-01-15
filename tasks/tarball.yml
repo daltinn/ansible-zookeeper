@@ -15,7 +15,7 @@
     path: "{{ zookeeper_tarball_dir }}/zookeeper-{{ zookeeper_version }}.tar.gz"
   register: zookeeper_tarball_script
 
-- name: Copy zookeeper from local 
+- name: Copy zookeeper from local
   copy:
     src: "{{ playbook_dir }}/files/zookeeper-{{ zookeeper_version }}.tar.gz"
     dest: "{{ zookeeper_tarball_dir }}/zookeeper-{{ zookeeper_version }}.tar.gz"
@@ -40,27 +40,23 @@
   get_url:
     url: "{{ zookeeper_url }}"
     dest: "{{ zookeeper_tarball_dir }}/zookeeper-{{ zookeeper_version }}.tar.gz"
-  tags:
-    - bootstrap
   register: zookeeper_tarball_downloaded
   when:
-   - zookeeper_archive_s3_bucket is not defined or zookeeper_archive_s3_object is not defined
-   - zookeeper_download_from_mirror
+    - zookeeper_archive_s3_bucket is not defined or zookeeper_archive_s3_object is not defined
+    - zookeeper_download_from_mirror
 
 - name: Unpack tarball
   command:
     tar xf {{zookeeper_tarball_dir}}/zookeeper-{{zookeeper_version}}.tar.gz --strip-components=1 chdir={{zookeeper_dir}} creates={{zookeeper_dir}}/bin
-  tags:
-    - bootstrap
 
 - group:
     name: zookeeper
-    system: yes
+    system: true
 
 - user:
     name: zookeeper
     group: zookeeper
-    system: yes
+    system: true
 
 - name: Write myid file
   template:
@@ -69,8 +65,6 @@
     owner: zookeeper
     group: zookeeper
     force: "{{ zookeeper_force_myid }}"
-  tags:
-    - deploy
   notify:
     - Restart zookeeper
 
@@ -80,8 +74,6 @@
     dest: "{{ zookeeper_dir }}/conf/zoo.cfg"
     owner: zookeeper
     group: zookeeper
-  tags:
-    - deploy
   notify:
     - Restart zookeeper
 
