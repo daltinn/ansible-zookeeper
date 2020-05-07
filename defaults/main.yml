@@ -133,9 +133,9 @@ zookeeper_env: #{}
     - "-Dlog4j.skipJansi=true"
 
 # Multi-node cluster enadled by default
-zookeeper_standalone: 'no'
+zookeeper_standalone: 'false'
 zookeeper_reconfig: 'yes'
-zookeeper_leader_servers: 'yes'
+zookeeper_leader_servers: 'true'
 
 # Controls Zookeeper myid generation
 zookeeper_force_myid: true

@@ -28,7 +28,4 @@
   tags:
     - always
 
-- name: zookeeper | Ensure handlers are notified now to conflicts.
-  meta: flush_handlers
-  tags:
-    - always
+- meta: flush_handlers
