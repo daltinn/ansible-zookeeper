@@ -45,15 +45,21 @@
     - zookeeper_archive_s3_bucket is not defined or zookeeper_archive_s3_object is not defined
     - zookeeper_download_from_mirror
 
-- name: Unpack tarball
-  command:
-    tar xf {{zookeeper_tarball_dir}}/zookeeper-{{zookeeper_version}}.tar.gz --strip-components=1 chdir={{zookeeper_dir}} creates={{zookeeper_dir}}/bin
+- name: Unpack tarball.
+  unarchive:
+    src: "{{ zookeeper_tarball_dir }}/zookeeper-{{ zookeeper_version }}.tar.gz"
+    dest: "{{ zookeeper_dir }}"
+    remote_src: yes
+    extra_opts:
+    - --strip-components=1
 
-- group:
+- name: Create group
+  group:
     name: zookeeper
     system: true
 
-- user:
+- name: Create user
+  user:
     name: zookeeper
     group: zookeeper
     system: true
