@@ -9,16 +9,8 @@ Installation
 -----------
 
 ```bash
-ansible-galaxy install AnsibleShipyard.ansible-zookeeper
+ansible-galaxy install daltinn.ansible-zookeeper
 ```
-
-Dependencies
-------------
-
-Java
-
- - https://github.com/AnsibleShipyard/ansible-java
- - https://github.com/geerlingguy/ansible-role-java
 
 Requirements
 ------------
@@ -133,41 +125,20 @@ See this sample [playbook](https://github.com/AnsibleShipyard/ansible-galaxy-rol
 which shows how to use this playbook as well as others. It is part of [ansible-galaxy-roles](https://github.com/AnsibleShipyard/ansible-galaxy-roles) and
 serves as a curation (and thus an example) of all our ansible playbooks.
 
+Test Role
+---------
+
+1. Install Molecule
+2. Enshure dependency installed ()
+
+```bash
+molecule test
+```
+
 License
 -------
 
-The MIT License (MIT)
-
-Copyright (c) 2014 Kien Pham
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-
-AnsibleShipyard
--------
-
-Our related playbooks
-
-1. [ansible-mesos](https://github.com/AnsibleShipyard/ansible-mesos)
-1. [ansible-marathon](https://github.com/AnsibleShipyard/ansible-marathon)
-1. [ansible-chronos](https://github.com/AnsibleShipyard/ansible-chronos)
-1. [ansible-zookeeper](https://github.com/AnsibleShipyard/ansible-zookeeper)
+see LICENSE file
 
 Author Information
 ------------------
