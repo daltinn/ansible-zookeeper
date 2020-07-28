@@ -1,8 +1,15 @@
 ---
-- name: Install OS Packages
+- name: Install OS Packages for Centos < 8
   yum: name={{ item }} state=present
   with_items:
     - libselinux-python
+  when: ansible_distribution_version is version('8', '<')
+
+- name: Install OS Packages for Centos >= 8
+  yum: name={{ item }} state=present
+  with_items:
+    - python3-libselinux
+  when: ansible_distribution_version is version('8', '>=')
 
 - include_tasks: tarball.yml
 
