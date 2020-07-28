@@ -15,70 +15,19 @@ galaxy_info:
     versions:
      - 6
      - 7
-  #- name: GenericUNIX
-  #  versions:
-  #  - all
-  #  - any
-  #- name: Fedora
-  #  versions:
-  #  - all
-  #  - 16
-  #  - 17
-  #  - 18
-  #  - 19
-  #  - 20
-  #- name: opensuse
-  #  versions:
-  #  - all
-  #  - 12.1
-  #  - 12.2
-  #  - 12.3
-  #  - 13.1
-  #  - 13.2
-  #- name: GenericBSD
-  #  versions:
-  #  - all
-  #  - any
-  #- name: FreeBSD
-  #  versions:
-  #  - all
-  #  - 8.0
-  #  - 8.1
-  #  - 8.2
-  #  - 8.3
-  #  - 8.4
-  #  - 9.0
-  #  - 9.1
-  #  - 9.1
-  #  - 9.2
+     - 8
   - name: Ubuntu
     versions:
-      - raring
-      - saucy
       - trusty
-      - utopic
-      - vivid
-      - wily
       - xenial
-  #- name: SLES
-  #  versions:
-  #  - all
-  #  - 10SP3
-  #  - 10SP4
-  #  - 11
-  #  - 11SP1
-  #  - 11SP2
-  #  - 11SP3
-  #- name: GenericLinux
-  #  versions:
-  #  - all
-  #  - any
+      - bionic
+      - focal
   - name: Debian
     versions:
-      - etch
-      - lenny
-      - squeeze
       - wheezy
+      - jessie
+      - stretch
+      - buster
 
   galaxy_tags:
     - zookeeper
