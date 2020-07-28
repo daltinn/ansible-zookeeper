@@ -1,0 +1,24 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+lint: |
+  yamllint -s .
+  ansible-lint
+platforms:
+  - name: Ubuntu_18_04
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu1804}-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    pre_build_image: true
+    exposed_ports:
+      - 8080
+      - 2888
+      - 3888
+provisioner:
+  name: ansible
+verifier:
+  name: ansible
