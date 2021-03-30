@@ -93,7 +93,7 @@
 - name: Write myid file
   template:
     src: "myid.j2"
-    dest: "{{ zookeeper_data_dir }}/myid"
+    dest: "{{ zookeeper_conf_dir }}/conf/myid"
     owner: zookeeper
     group: zookeeper
     force: "{{ zookeeper_force_myid }}"

@@ -32,7 +32,7 @@
 - name: Configure zookeeper env file
   template:
     src: "zookeeper-env.j2"
-    dest: "{{ zookeeper_conf_dir }}/conf/environment"
+    dest: "{{ zookeeper_conf_dir }}/conf/java.env"
     owner: zookeeper
     group: zookeeper
     mode: 0755
