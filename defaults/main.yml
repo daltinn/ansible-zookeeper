@@ -134,7 +134,7 @@ zookeeper_env: #{}
 
 # Multi-node cluster enadled by default
 zookeeper_standalone: 'false'
-zookeeper_reconfig: 'yes'
+zookeeper_reconfig: 'true'
 zookeeper_leader_servers: 'true'
 
 # Controls Zookeeper myid generation

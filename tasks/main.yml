@@ -28,4 +28,5 @@
   tags:
     - always
 
-- meta: flush_handlers
+- name: flush handlers
+  meta: flush_handlers

@@ -1,23 +1,23 @@
 ---
 - name: Change ownership on zookeeper directory
   file:
-    path: "{{zookeeper_dir}}"
+    path: "{{ zookeeper_dir }}"
     owner: zookeeper
     group: zookeeper
     state: directory
     recurse: true
 
-- name: Create zookeeper {{item}} directory
+- name: Create zookeeper {{ item }} directory
   file:
-    path: "{{item}}"
+    path: "{{ item }}"
     owner: zookeeper
     group: zookeeper
     state: directory
     recurse: true
   with_items:
-    - "{{zookeeper_data_dir}}"
-    - "{{zookeeper_log_dir}}"
-    - "{{zookeeper_data_log_dir}}"
+    - "{{ zookeeper_data_dir }}"
+    - "{{ zookeeper_log_dir }}"
+    - "{{ zookeeper_data_log_dir }}"
 
 - name: Create zookeeper myid simlink
   file:

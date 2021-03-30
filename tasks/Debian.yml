@@ -44,8 +44,10 @@
   when:
     - ansible_service_mgr == 'systemd'
 
-- debug:
+- name: print zookeeper host
+  debug:
     var: zookeeper_hosts
+    verbosity: 1
 
 - name: Overwrite myid file.
   template:

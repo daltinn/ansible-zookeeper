@@ -87,6 +87,6 @@
   copy:
     content: "export PATH=$PATH:{{ zookeeper_dir }}/bin"
     dest: "/etc/profile.d/zookeeper_path.sh"
-    mode: 755
+    mode: 0755
   when:
     - zookeeper_register_path_env
