@@ -11,7 +11,7 @@
 
 - name: Apt install required system packages.
   apt:
-    name: "{{ item.pkg }}{% if item.state == 'present' and zookeeper_version is defined and zookeeper_version != '' %}={{ zookeeper_version }}*{% endif %}"
+    name: "{{ item.pkg }}{% if item.state == 'present' and zookeeper_version is defined and zookeeper_version|length >0 %}={{ zookeeper_version }}*{% endif %}"
     state: "{{ item.state }}"
     force: "{{ zookeeper_apt_force_apply }}"
     force_apt_get: true

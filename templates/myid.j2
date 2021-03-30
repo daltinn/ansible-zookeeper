@@ -1,8 +1,11 @@
-{% for node in zookeeper_hosts  %}
-{%   if node.address == zookeeper_hosts_hostname or node.address == ansible_default_ipv4.address %}
-{{ node.id }}
-{%   endif %}
-{%   if node == zookeeper_hosts_hostname or node == ansible_default_ipv4.address %}
+{% for server in zookeeper_hosts %}
+{% if server.host is defined %}
+{% if server.host == zookeeper_hosts_hostname %}
+{{ server.id }}
+{% endif %}
+{% else %}
+{% if server == zookeeper_hosts_hostname %}
 {{ loop.index }}
-{%   endif %}
+{% endif %}
+{% endif %}
 {% endfor %}

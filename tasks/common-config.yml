@@ -1,12 +1,4 @@
 ---
-- name: Change ownership on zookeeper directory
-  file:
-    path: "{{ zookeeper_dir }}"
-    owner: zookeeper
-    group: zookeeper
-    state: directory
-    recurse: true
-
 - name: Create zookeeper {{ item }} directory
   file:
     path: "{{ item }}"
