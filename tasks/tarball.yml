@@ -1,4 +1,15 @@
 ---
+- name: Create group
+  group:
+    name: zookeeper
+    system: true
+
+- name: Create user
+  user:
+    name: zookeeper
+    group: zookeeper
+    system: true
+
 - name: Ensure the tarball dir exists at {{ zookeeper_tarball_dir }}
   file:
     path: "{{ zookeeper_tarball_dir }}"
@@ -44,25 +55,40 @@
   when:
     - zookeeper_archive_s3_bucket is not defined or zookeeper_archive_s3_object is not defined
     - zookeeper_download_from_mirror
+    - not zookeeper_tarball_script.stat.exists
 
 - name: Unpack tarball.
+  become: true
   unarchive:
     src: "{{ zookeeper_tarball_dir }}/zookeeper-{{ zookeeper_version }}.tar.gz"
     dest: "{{ zookeeper_dir }}"
     remote_src: yes
+    owner: zookeeper
+    group: zookeeper
     extra_opts:
     - --strip-components=1
+  when: not zookeeper_tarball_script.stat.exists
 
-- name: Create group
-  group:
-    name: zookeeper
-    system: true
+#- name: Change ownership on zookeeper directory.
+#  file: path={{ zookeeper_dir }} state=directory owner=zookeeper group=zookeeper
+#  tags: bootstrap
+- name: check whether the zookeeper_data_dir exist
+  stat:
+    path: "{{ zookeeper_data_dir }}"
+  register: zookeeper_data_dir_check
 
-- name: Create user
-  user:
-    name: zookeeper
-    group: zookeeper
-    system: true
+- name: check whether the zookeeper_data_log_dir exist
+  stat:
+    path: "{{ zookeeper_data_log_dir }}"
+  register: zookeeper_data_log_dir_check
+
+- name: "Create zookeeper {{ item }} directory."
+  file: path={{ item }} state=directory owner=zookeeper group=zookeeper
+  tags: bootstrap
+  with_items:
+    - "{{ zookeeper_data_dir }}"
+    - "{{ zookeeper_data_log_dir }}"
+  when: not zookeeper_data_dir_check.stat.exists or not zookeeper_data_log_dir_check.stat.exists
 
 - name: Write myid file
   template:
